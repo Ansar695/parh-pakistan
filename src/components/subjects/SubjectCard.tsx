@@ -18,7 +18,7 @@ export function SubjectCard({ name, description, image, onSelect }: SubjectCardP
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
-      <Card className="overflow-hidden cursor-pointer h-full flex flex-col" onClick={onSelect}>
+      <Card className="overflow-hidden cursor-pointer h-full flex flex-col max-w-[350px]" onClick={onSelect}>
         <div className="relative h-48">
           <Image
             src={image}
