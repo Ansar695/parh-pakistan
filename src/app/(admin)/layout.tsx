@@ -18,6 +18,7 @@ import {
   BookOpen,
   Bookmark,
 } from "lucide-react"
+import { Toaster } from "@/components/ui/toaster"
 
 interface AdminDashboardLayoutProps {
   children: ReactNode
@@ -134,6 +135,7 @@ export default function AdminDashboardLayout({ children }: AdminDashboardLayoutP
         {/* Main content */}
         <main className="flex-1 p-8">
           <div className="max-w-7xl mx-auto">{children}</div>
+          <Toaster />
         </main>
       </div>
     </div>

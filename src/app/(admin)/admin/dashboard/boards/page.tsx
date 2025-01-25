@@ -1,73 +1,88 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Trash2 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useToast } from "@/hooks/use-toast"
+import { DataTable } from "@/components/admin-dashboard/DataTable"
+import { AddBoardModal } from "@/components/admin-dashboard/modals/AddBoardModal"
 
-export default function UploadBoards() {
-  const [boards, setBoards] = useState<string[]>([])
-  const [newBoard, setNewBoard] = useState('')
+interface Board {
+  id: string
+  name: string
+  logo: string
+  slug: string
+  status: "active" | "inactive"
+}
 
-  const addBoard = () => {
-    if (newBoard.trim() !== '' && !boards.includes(newBoard.trim())) {
-      setBoards([...boards, newBoard.trim()])
-      setNewBoard('')
+const initialBoards: Board[] = [
+  { id: "1", name: "Punjab Board", logo: "/logos/punjab-board.png", slug: "punjab-board", status: "active" },
+  { id: "2", name: "Sindh Board", logo: "/logos/sindh-board.png", slug: "sindh-board", status: "active" },
+  { id: "3", name: "Federal Board", logo: "/logos/federal-board.png", slug: "federal-board", status: "inactive" },
+]
+
+export default function BoardsPage() {
+  const [boards, setBoards] = useState<Board[]>(initialBoards)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { toast } = useToast()
+
+  const columns = [
+    { key: "logo", label: "Logo" },
+    { key: "name", label: "Board Name" },
+  ]
+
+  const handleAddBoard = (data: { name: string; logo: File | null; slug: string }) => {
+    const newBoard: Board = {
+      id: (boards.length + 1).toString(),
+      name: data.name,
+      logo: data.logo ? URL.createObjectURL(data.logo) : "/logos/default-board.png",
+      slug: data.slug,
+      status: "active",
     }
+    setBoards([...boards, newBoard])
+    setIsModalOpen(false)
+    toast({ title: "Board added successfully", variant: "success" as any })
   }
 
-  const removeBoard = (index: number) => {
-    setBoards(boards.filter((_, i) => i !== index))
+  const handleEditBoard = (board: Board) => {
+    // Implement edit functionality
+    console.log("add ", board)
+  }
+
+  const handleDeleteBoard = (board: Board) => {
+    setBoards(boards.filter((b) => b.id !== board.id))
+    toast({ title: "Board deleted successfully", variant: "success" as any })
+  }
+
+  const handleStatusChange = (board: Board) => {
+    setBoards(
+      boards.map((b) => (b.id === board.id ? { ...b, status: b.status === "active" ? "inactive" : "active" } : b)),
+    )
+    toast({ title: `Board status changed to ${board.status === "active" ? "inactive" : "active"}`, variant: "success" as any })
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Manage Boards</h1>
+    <div className="container mx-auto py-10">
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Add New Board</CardTitle>
+          <CardTitle>Manage Boards</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex space-x-2">
-            <Input
-              type="text"
-              placeholder="Enter board name"
-              value={newBoard}
-              onChange={(e) => setNewBoard(e.target.value)}
-              className="flex-grow"
-            />
-            <Button onClick={addBoard}>
-              <Plus className="mr-2 h-4 w-4" /> Add Board
-            </Button>
-          </div>
+          <DataTable
+            data={boards}
+            columns={columns}
+            onAdd={() => setIsModalOpen(true)}
+            onEdit={handleEditBoard}
+            onDelete={handleDeleteBoard}
+            onStatusChange={handleStatusChange}
+          />
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Existing Boards</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <AnimatePresence>
-            {boards.map((board, index) => (
-              <motion.div
-                key={board}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center justify-between bg-gray-100 p-3 rounded-md mb-2"
-              >
-                <span>{board}</span>
-                <Button variant="destructive" size="sm" onClick={() => removeBoard(index)}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
+      <AddBoardModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddBoard}
+      />
     </div>
   )
 }
