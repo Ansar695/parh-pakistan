@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React, { useState } from 'react';
 import { z } from 'zod';
@@ -82,9 +80,9 @@ const SignupPage = () => {
       </div>
 
       {/* Main Container */}
-      <div className="w-full max-w-5xl bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl flex overflow-hidden">
+      <div className="w-full max-w-6xl bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl flex overflow-hidden">
         {/* Left Side - Educational Illustration */}
-        <div className="w-1/2 bg-gradient-to-br from-blue-500 to-purple-600 p-12 flex flex-col justify-center text-white relative">
+        <div className="w-[40%] bg-gradient-to-br from-blue-500 to-purple-600 p-12 flex flex-col justify-center text-white relative">
           <div className="absolute top-8 left-8">
             <BookOpen className="w-16 h-16 text-white/20" />
           </div>
@@ -101,7 +99,7 @@ const SignupPage = () => {
         </div>
 
         {/* Right Side - Signup Form */}
-        <div className="w-1/2 p-12">
+        <div className="w-[60%] p-12">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="text-center">
@@ -147,7 +145,7 @@ const SignupPage = () => {
                       <Input 
                         placeholder="Enter your full name" 
                         {...field} 
-                        className="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        className="border-gray-300 h-12 focus:border-blue-500 focus:ring focus:ring-blue-200"
                       />
                     </FormControl>
                     <FormMessage />
@@ -167,7 +165,7 @@ const SignupPage = () => {
                         placeholder="Enter your email" 
                         type="email" 
                         {...field} 
-                        className="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        className="border-gray-300 h-12 focus:border-blue-500 focus:ring focus:ring-blue-200"
                       />
                     </FormControl>
                     <FormMessage />
@@ -187,7 +185,7 @@ const SignupPage = () => {
                         placeholder="Create a strong password" 
                         type="password" 
                         {...field} 
-                        className="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        className="border-gray-300 h-12 focus:border-blue-500 focus:ring focus:ring-blue-200"
                       />
                     </FormControl>
                     <FormMessage />
@@ -207,7 +205,7 @@ const SignupPage = () => {
                         placeholder="Confirm your password" 
                         type="password" 
                         {...field} 
-                        className="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        className="border-gray-300 h-12 focus:border-blue-500 focus:ring focus:ring-blue-200"
                       />
                     </FormControl>
                     <FormMessage />
@@ -218,7 +216,7 @@ const SignupPage = () => {
               {/* Submit Button */}
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                className="w-full bg-gradient-to-r h-12 from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
               >
                 Create Account
               </Button>

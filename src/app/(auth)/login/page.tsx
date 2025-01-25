@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React from 'react';
 import { z } from 'zod';
@@ -91,7 +90,7 @@ const LoginPage = () => {
                         placeholder="Enter your email" 
                         type="email" 
                         {...field} 
-                        className="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        className="border-gray-300 h-12 focus:border-blue-500 focus:ring focus:ring-blue-200"
                       />
                     </FormControl>
                     <FormMessage />
@@ -111,7 +110,7 @@ const LoginPage = () => {
                         placeholder="Enter your password" 
                         type="password" 
                         {...field} 
-                        className="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        className="border-gray-300 h-12 focus:border-blue-500 focus:ring focus:ring-blue-200"
                       />
                     </FormControl>
                     <FormMessage />
@@ -129,7 +128,7 @@ const LoginPage = () => {
               {/* Submit Button */}
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                className="w-full bg-gradient-to-r h-12 from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
               >
                 Log In
               </Button>
