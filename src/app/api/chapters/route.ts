@@ -1,10 +1,11 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
-import { ApiError, handleApiError, generateSlug } from "@/lib/utils";
+import { ApiError, handleApiError } from "@/lib/utils";
 
 const createChapterSchema = z.object({
   name: z.string().min(1),
+  slug: z.string().min(1),
   chapterFile: z.string().url(),
   boardId: z.string(),
   classId: z.string(),
@@ -14,10 +15,8 @@ const createChapterSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, chapterFile, boardId, classId, subjectId } = createChapterSchema.parse(body);
-    
-    const slug = generateSlug(name);
-    
+    const { name, chapterFile, boardId, classId, subjectId, slug } = createChapterSchema.parse(body);
+        
     // Verify all relations exist
     const board = await prisma.board.findUnique({
       where: { id: boardId },
