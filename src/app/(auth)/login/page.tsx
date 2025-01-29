@@ -1,5 +1,6 @@
 'use client'
 import React from 'react';
+import { signIn } from 'next-auth/react'
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,8 +37,28 @@ const LoginPage = () => {
     }
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log('Login Data:', data);
+    try {
+      const res = await signIn('credentials', {
+        email: data?.email,
+        password: data.password,
+        redirect: false,
+      })
+      console.log("Response ", res)
+
+      // if (res?.error) {
+      //   setError('Invalid credentials')
+      //   return
+      // }
+
+      // router.push('/dashboard')
+    } catch (error: any) {
+      console.log("error ", error)
+      // setError(error.message)
+    } finally {
+      // setLoading(false)
+    }
   };
 
   return (
