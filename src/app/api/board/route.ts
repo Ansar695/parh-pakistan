@@ -6,13 +6,14 @@ import { ApiError, handleApiError } from "@/lib/utils";
 const createBoardSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
+  description: z.string().min(1),
   image: z.string().url(),
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, image, slug } = createBoardSchema.parse(body);
+    const { name, image, slug, description } = createBoardSchema.parse(body);
         
     // Check for duplicate slug
     const existing = await prisma.board.findUnique({ where: {name: name, slug: slug}})
@@ -25,6 +26,7 @@ export async function POST(req: NextRequest) {
         name,
         slug,
         image,
+        description
       },
     });
 

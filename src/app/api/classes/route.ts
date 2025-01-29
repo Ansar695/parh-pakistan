@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { ApiError, handleApiError } from "@/lib/utils";
 import { NextRequest } from "next/server";
+import { groupByType } from "@/utils/groupByType";
 
 const createClassSchema = z.object({
   name: z.string().min(1),
@@ -53,14 +54,14 @@ export async function GET(req: NextRequest) {
     const where = boardId ? { boardId } : {};
     
     const classes = await prisma.classes.findMany({
-      where,
-      include: {
-        board: true,
-        subjects: true,
-      },
+      where
     });
+
+    if(!classes.length) return Response.json({status: 404, message:"No classes found."});
+
+    const transformedClasses = groupByType(classes)
     
-    return Response.json({status: 200, data:classes});
+    return Response.json({status: 200, data:transformedClasses});
   } catch (error) {
     return handleApiError(error);
   }

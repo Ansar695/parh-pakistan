@@ -60,6 +60,7 @@ model Board {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   slug      String    @unique
+  description      String
   image  String
   classes   Classes[]
   subjects  Subjects[]
