@@ -3,38 +3,48 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Building2, BookOpen, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useGetBoardsMutation } from '@/redux/services/board';
+import { useEffect } from 'react';
+import { Toaster } from '@/components/ui/toaster';
+import { useToast } from '@/hooks/use-toast';
+import { BoardTypes } from '@/utils/types/board';
+import Image from 'next/image';
+import CustomSpinner from '@/components/shared/CustomSpinner';
 
 const BoardSelection = () => {
     const router = useRouter()
-  const boards = [
-    {
-      id: 'punjab',
-      name: 'Punjab Board',
-      fullName: 'Board of Intermediate & Secondary Education',
-      location: 'Punjab',
-      icon: <Building2 className="w-12 h-12" />,
-      description: 'Access curriculum and question banks for all Punjab educational boards including Lahore, Gujranwala, Faisalabad, and more.',
-      subjects: '12+ Subjects',
-      classes: '6 Classes',
-      slug: "punjab-board"
-    },
-    {
-      id: 'federal',
-      name: 'Federal Board',
-      fullName: 'Board of Intermediate & Secondary Education',
-      location: 'Islamabad',
-      icon: <BookOpen className="w-12 h-12" />,
-      description: 'Comprehensive coverage of Federal Board curriculum with updated question banks and examination patterns.',
-      subjects: '10+ Subjects',
-      classes: '6 Classes',
-      slug: "federal-board"
-    }
-  ];
+    const { toast } = useToast()
+
+    const [getBoards, { data, isLoading }] = useGetBoardsMutation();
+
+    const getBoardsData = async () => {
+      try {
+        const response = await getBoards("sd").unwrap();
+        if(!response){
+          toast({
+            title: "No board found.",
+            description: "There is no board added yet.",
+          })
+        }
+      } catch (error: any) {
+        console.log(error);
+        toast({
+          variant: 'destructive',
+          title: "Error.",
+          description: "Something went wrong, please refresh the page.",
+        })
+      }
+    };
+
+    useEffect(() => {
+      getBoardsData();
+    }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <Toaster />
       <div className="container mx-auto px-4 py-12">
         {/* Header Section */}
         <motion.div 
@@ -51,8 +61,9 @@ const BoardSelection = () => {
         </motion.div>
 
         {/* Boards Grid */}
+        {isLoading ? <CustomSpinner /> :
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {boards.map((board, index) => (
+          {data?.data?.map((board: BoardTypes, index:number) => (
             <motion.div
               key={board.id}
               initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
@@ -62,22 +73,28 @@ const BoardSelection = () => {
               <Card className="h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer overflow-hidden group">
                 <CardContent className="p-8">
                   <div className="flex items-start gap-6">
-                    <div className="p-4 rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      {board.icon}
+                    <div className=" rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <Image 
+                        src={board?.image}
+                        alt='board'
+                        width={84}
+                        height={84}
+                        className='w-16 h-16 rounded-md object-cover'
+                      />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-semibold mb-1">{board.name}</h2>
-                      <p className="text-sm text-gray-500 mb-4">{board.fullName}</p>
-                      <p className="text-gray-600 mb-6">{board.description}</p>
+                      <h2 className="text-2xl font-semibold mb-1">{board?.name}</h2>
+                      <p className="text-sm text-gray-500 mb-4">{board?.name}</p>
+                      <p className="text-gray-600 mb-6">{board?.description}</p>
                       
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="p-3 bg-gray-50 rounded-lg text-center">
                           <p className="text-sm text-gray-500">Available Subjects</p>
-                          <p className="font-semibold text-gray-700">{board.subjects}</p>
+                          <p className="font-semibold text-gray-700">{board?.subjects?.length}</p>
                         </div>
                         <div className="p-3 bg-gray-50 rounded-lg text-center">
                           <p className="text-sm text-gray-500">Class Range</p>
-                          <p className="font-semibold text-gray-700">{board.classes}</p>
+                          <p className="font-semibold text-gray-700">{board?.classes?.length}</p>
                         </div>
                       </div>
 
@@ -97,6 +114,7 @@ const BoardSelection = () => {
             </motion.div>
           ))}
         </div>
+        }
 
         {/* Help Section */}
         <motion.div

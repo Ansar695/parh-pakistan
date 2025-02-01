@@ -77,13 +77,9 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const boardId = searchParams.get('boardId');
-    const classId = searchParams.get('classId');
     const subjectId = searchParams.get('subjectId');
-
+    console.log("subjectId: ", subjectId);
     const where = {
-      ...(boardId && { boardId }),
-      ...(classId && { classId }),
       ...(subjectId && { subjectId }),
     };
     

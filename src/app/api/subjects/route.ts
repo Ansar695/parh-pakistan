@@ -65,12 +65,22 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const boardId = searchParams.get('boardId');
-    const classId = searchParams.get('classId');
+    // const boardId = searchParams.get('boardId');
+    const className = searchParams.get('class') as any;
+    const boardSlug = searchParams.get('board') as any;
 
+    const board = await prisma.board.findFirst({
+      where: {slug: boardSlug}
+    });
+    if(!board) return Response.json({status: 404, message:"Board not found."});
+
+    const result = await prisma.classes.findFirst({
+      where: {name: className, boardId: board.id}
+    });
+    if(!result) return Response.json({status: 404, message:"Class not found."});
+    console.log("result: " ,result)
     const where = {
-      ...(boardId && { boardId }),
-      ...(classId && { classId }),
+      ...(result.id && { classId: result?.id }),
     };
     
     const subjects = await prisma.subjects.findMany({

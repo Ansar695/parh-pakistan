@@ -1,24 +1,54 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, ArrowRight, BookOpen } from 'lucide-react'
-import { BoardTopics, Topic, topicsData } from '@/utils/static-data/topics'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { Topic, topicsData } from '@/utils/static-data/topics'
 import { PageTransition } from '@/components/shared/Transition'
 import { TopicCard } from '@/components/subjects/TopicCard'
+import { useGetChaptersMutation } from '@/redux/services/chapters'
+import { useToast } from '@/hooks/use-toast'
 
 export default function SelectTopics() {
   const [selectedTopics, setSelectedTopics] = useState<Record<string, string[]>>({})
   const params = useParams()
   const router = useRouter()
+  const { toast } = useToast()
+  const searchParams = useSearchParams()
+
   const board = params.board as any
   const classNumber = params.class as string
   const subject = params.subject as string
+  const subjectId = searchParams.get("subjectId")
+
+    const [getChapters, { data, isLoading }] = useGetChaptersMutation();
+  console.log("data ", data)
+    const getChatptersData = async () => {
+      try {
+        const response = await getChapters(subjectId).unwrap();
+        if(!response){
+          toast({
+            title: "No board found.",
+            description: "There is no board added yet.",
+          })
+        }
+      } catch (error: any) {
+        console.log(error);
+        toast({
+          variant: 'destructive',
+          title: "Error.",
+          description: "Something went wrong, please refresh the page.",
+        })
+      }
+    };
+
+    useEffect(() => {
+      getChatptersData();
+    }, []);
 
   const topics: Topic[] = topicsData[board]?.[classNumber]?.[subject] || []
 
